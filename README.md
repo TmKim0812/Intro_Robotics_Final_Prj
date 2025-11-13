@@ -2,7 +2,7 @@
    ```bash
    git clone https://github.com/TmKim0812/Intro_Robotics_Final_Prj.git
    cd Intro_Robotics_Final_Prj
-    ```
+   ```
 
 ### 2. (Optional but recommended) Create a virtual environment:
 
