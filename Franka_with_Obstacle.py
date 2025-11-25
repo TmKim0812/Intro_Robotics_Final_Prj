@@ -2,7 +2,7 @@ import numpy as np
 import genesis as gs
 
 #fix the random seed
-np.random.seed(29) # successful seed: 42, 29, 14 / failure but meaningful: 25, 6
+np.random.seed(25) # successful seed: 42, 29, 14 / failure but meaningful: 25, 6
 # Initialization
 gs.init(backend=gs.gpu)
 scene = gs.Scene(
@@ -73,7 +73,6 @@ links = [franka.get_link(name) for name in [
     "link1","link2","link3","link4","link5","link6","link7"
 ]]
 links.append(ee)
-
 
 # Parameters 
 λ = 0.05
