@@ -2,12 +2,20 @@ import numpy as np
 import genesis as gs
 
 #fix the random seed
-np.random.seed(25) # successful seed: 42, 29, 14 / failure but meaningful: 25, 6
+np.random.seed(29) # successful seed: 42, 29, 14 / failure but meaningful: 25, 6
 # Initialization
 gs.init(backend=gs.gpu)
 scene = gs.Scene(
     sim_options=gs.options.SimOptions(dt=0.01, gravity=(0,0,0)),
     show_viewer=True,
+)
+
+cam = scene.add_camera(
+    res=(1280, 720),
+    pos=(3.5, 0.0, 2.5),
+    lookat=(0, 0, 0.5),
+    fov=30,
+    GUI=False
 )
 
 plane = scene.add_entity(gs.morphs.Plane())
@@ -59,6 +67,9 @@ cubes = [scene.add_entity(gs.morphs.Box(size=(0.15,0.15,0.15), pos=p, fixed=True
 
 scene.build()
 
+# 6. Start Recording
+cam.start_recording()
+
 # joints
 arm_joints = ["joint1","joint2","joint3","joint4","joint5","joint6","joint7"]
 dofs = [franka.get_joint(j).dof_idx_local for j in arm_joints]
@@ -82,7 +93,7 @@ k_avoid = 0.4          # stronger for tangential motion
 influence_radius = 0.3
 q_null_weight = 0.1
 
-for t in range(2000):
+for t in range(250):
     ee_pos = ee.get_pos().cpu().numpy()
     goal_vec = np.array(goal_pos) - ee_pos
 
@@ -133,3 +144,8 @@ for t in range(2000):
     # Apply
     franka.control_dofs_velocity(qdot, dofs)
     scene.step()  
+    cam.render()
+
+# 8. Stop and Save
+cam.stop_recording(save_to_filename='simulation_video.mp4', fps=60)
+print("Video saved to simulation_video.mp4")
