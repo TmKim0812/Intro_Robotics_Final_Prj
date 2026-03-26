@@ -1,11 +1,19 @@
 import numpy as np
 import genesis as gs
 
-np.random.seed(25) # fix the random seed / working when 25 / failure when 42
+np.random.seed(25) # fix the random seed / working when 25, 47, 8 / failure when 42
 gs.init(backend=gs.gpu)
 scene = gs.Scene(
     sim_options=gs.options.SimOptions(dt=0.01, gravity=(0,0,0)),
     show_viewer=True,
+)
+
+cam = scene.add_camera(
+    res=(1280, 720),
+    pos=(-3.5, 0.0, 2.5),
+    lookat=(0, 0, 0.5),
+    fov=30,
+    GUI=False
 )
 
 # Entities
@@ -49,6 +57,9 @@ cubes = [scene.add_entity(gs.morphs.Box(size=(0.1,0.1,0.1), pos=p, fixed=True), 
 
 scene.build()
 
+# 6. Start Recording
+cam.start_recording()
+
 # Setup
 arm_joints = ["joint1","joint2","joint3","joint4","joint5","joint6","joint7"]
 dofs = [franka.get_joint(j).dof_idx_local for j in arm_joints]
@@ -80,9 +91,15 @@ def move_linear(franka, q_start, q_end, steps=150):
         q = (1 - α) * q_start + α * q_end
         franka.control_dofs_position(q)
         scene.step()
+        cam.render()
 
 # Execute motion
 move_linear(franka, q_start, q_via, steps=250)
 move_linear(franka, q_via, q_goal, steps=250)
 for i in range(50):
     scene.step() # give more time to reach goal point
+    cam.render()
+
+# 8. Stop and Save
+cam.stop_recording(save_to_filename='simulation_video.mp4', fps=60)
+print("Video saved to simulation_video.mp4")
