@@ -22,4 +22,10 @@
    ```bash
    python3 Franka_with_Obstacle.py
    ```
-   -> 3 obstacles(box-shaped), one goal point(green sphere) / The end effector can reach to the goal point, but not implemented avoiding obstacles yet
+   -> 3 obstacles(box-shaped), one goal point(green sphere) 
+
+### 5. Also implemented a viapoint logic
+
+   ```bash
+   python3 Franka_Viapoint.py
+   ```
